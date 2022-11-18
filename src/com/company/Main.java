@@ -14,19 +14,37 @@ public class Main {
         createInfrArray(infrastructureObjects);
         outputInfrArray(infrastructureObjects);
 
-        Individual[] individuals = new Individual[6];
-        for (int i = 0; i < 6; i++) {
+        Individual[] individuals = new Individual[Population.sizeOfPopulation];
+        for (int i = 0; i < Population.sizeOfPopulation; i++) {
             System.out.println((i+1) + "-ая особь:");
             individuals[i] = new Individual(infrastructureObjects);
             System.out.println();
         }
-        System.out.println();
-        outputIndivArray(individuals);
-        sortIndivArray(individuals);
 
-        individuals = crossingOver(individuals);
+        System.out.println("******************************************************************");
+        System.out.println("******************************************************************");
         outputIndivArray(individuals);
         sortIndivArray(individuals);
+        Population population = new Population(individuals);
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        System.out.println("Фитнес функция поколения: " + population.getAverageFF());
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+        for (int i = 0; i < 6; i++) {
+            if (i==3){
+                individuals[1]=Individual.mutationChild(individuals[1], infrastructureObjects);
+            }
+            individuals = crossingOver(individuals);
+            //outputIndivArray(individuals);
+            sortIndivArray(individuals);
+            population = new Population(individuals);
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            System.out.println("Фитнес функция поколения: " + population.getAverageFF());
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            System.out.println();
+
+        }
+
 
 
     }
@@ -63,7 +81,7 @@ public class Main {
      * @param individuals - массив особей
      */
     public static void outputIndivArray(Individual[] individuals){
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < Population.sizeOfPopulation; i++) {
             System.out.println((i+1) + "-ая особь");
             System.out.println("Cтоимость всех объектов: " + individuals[i].getSumOfCost());
             System.out.println("Пассажиропоток всех объектов: " + individuals[i].getSumOfCapacity());
@@ -82,7 +100,7 @@ public class Main {
      */
     public static void sortIndivArray(Individual[] individuals){
         Arrays.sort(individuals, Collections.reverseOrder());
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < Population.sizeOfPopulation; i++) {
             System.out.println((i + 1) + "-ая особь:");
             System.out.println("Фитнес функция: " + individuals[i].getFitnessFunction());
         }
@@ -96,8 +114,8 @@ public class Main {
      * @return новый массив особей
      */
     public static Individual[] crossingOver(Individual[] individuals){
-        Individual[] newIndividuals = new Individual[6];
-        int half = individuals.length / 2;
+        Individual[] newIndividuals = new Individual[Population.sizeOfPopulation];
+        int half = Population.sizeOfPopulation / 2;
         int count = 0;
         for (int i = 0; i < half; i++) {
             newIndividuals[i] = individuals[i];

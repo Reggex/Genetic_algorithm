@@ -152,13 +152,13 @@ public class Individual implements Comparable<Individual>{
      */
     public void setFitnessFunction() {
         fitnessFunction = sumOfCapacity;
-        if (sumFF==false){
+        if (!sumFF){
             fitnessFunction = fitnessFunction - 100 * (sumOfCost - 500);
         }
-        if (costFF==false){
+        if (!costFF){
             fitnessFunction = (int) (fitnessFunction - 10000 * (0.15 * costOfRailwayGround - costOfTaxi/costOfRailwayGround));
         }
-        if (capacityFF==false){
+        if (!capacityFF){
             fitnessFunction = fitnessFunction - 1000000 * (3 - capacityOfRailway);
         }
     }
@@ -194,4 +194,26 @@ public class Individual implements Comparable<Individual>{
         child.setFitnessFunction();
         return child;
     }
+
+    public static Individual mutationChild(Individual individual, InfrastructureObject[] infrastructureObject){
+        Random random = new Random();
+        Individual child = new Individual();
+        int x = random.nextInt(sizeOfIndividual);
+        int y = random.nextInt(Main.sizeOfInfrastructure);
+        for (int i = 0; i < x; i++) {
+            child.individualArray[i] = individual.individualArray[i];
+        }
+        child.individualArray[x] = infrastructureObject[y];
+        for (int i = (x+1); i < sizeOfIndividual; i++) {
+            child.individualArray[i] = individual.individualArray[i];
+        }
+        child.setSumOfCost();
+        child.setSumOfCapacity();
+        child.setCapacityOfRailway();
+        child.setCostOfTaxi();
+        child.setFitnessFunction();
+        return child;
+    }
+
+
 }
