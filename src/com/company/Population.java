@@ -6,7 +6,7 @@ package com.company;
 public class Population {
 
     private double averageFF;
-    public static int sizeOfPopulation = 6;
+    public static int sizeOfPopulation = 20;
     public Individual[] individualsArray = new Individual[sizeOfPopulation];
 
     /**

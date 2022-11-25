@@ -1,11 +1,13 @@
 package com.company;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
 public class Main {
 
     public static int sizeOfInfrastructure = 500;                   // количество объектов инфраструктуры всего
+    public static double differenceFF;
 
     public static void main(String[] args) {
 	// write your code here
@@ -21,31 +23,74 @@ public class Main {
             System.out.println();
         }
 
+
         System.out.println("******************************************************************");
         System.out.println("******************************************************************");
         outputIndivArray(individuals);
         sortIndivArray(individuals);
+
         Population population = new Population(individuals);
+        ArrayList<Population> populations = new ArrayList<>();
+        populations.add(0,population);
+
         System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         System.out.println("Фитнес функция поколения: " + population.getAverageFF());
         System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
-        for (int i = 0; i < 6; i++) {
-            if (i==3){
-                individuals[1]=Individual.mutationChild(individuals[1], infrastructureObjects);
-            }
-            individuals = crossingOver(individuals);
+        for (int i = 1; i < 5; i++) {
+            /*if (i==3){
+            individuals[1]=Individual.mutationChild(individuals[1], infrastructureObjects);
+            }*/
+            individuals = crossingOver1(individuals);
             //outputIndivArray(individuals);
             sortIndivArray(individuals);
             population = new Population(individuals);
+            populations.add(i,population);
+            differenceFF = calculateFF(populations);
+
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            System.out.println("Фитнес функция поколения: " + population.getAverageFF());
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            System.out.println();
+        }
+
+        /*individuals = crossingOver1(individuals);
+        //outputIndivArray(individuals);
+        sortIndivArray(individuals);
+        population = new Population(individuals);
+        populations.add(1,population);
+
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        System.out.println("Фитнес функция поколения: " + population.getAverageFF());
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        System.out.println();
+
+        differenceFF = calculateFF(populations);
+
+        while(differenceFF > 0) {
+            int i=2;
+            *//*if (i==3){
+                individuals[1]=Individual.mutationChild(individuals[1], infrastructureObjects);
+            }*//*
+            individuals = crossingOver1(individuals);
+            //outputIndivArray(individuals);
+            sortIndivArray(individuals);
+            population = new Population(individuals);
+            populations.add(i,population);
+            differenceFF = calculateFF(populations);
+
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             System.out.println("Фитнес функция поколения: " + population.getAverageFF());
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             System.out.println();
 
+            i++;
+
+        }*/
+
+        for (int i = 0; i < populations.size(); i++) {
+            System.out.println(populations.get(i).getAverageFF());
         }
-
-
 
     }
 
@@ -100,7 +145,7 @@ public class Main {
      */
     public static void sortIndivArray(Individual[] individuals){
         Arrays.sort(individuals, Collections.reverseOrder());
-        for (int i = 0; i < Population.sizeOfPopulation; i++) {
+        for (int i = 0; i < individuals.length; i++) {
             System.out.println((i + 1) + "-ая особь:");
             System.out.println("Фитнес функция: " + individuals[i].getFitnessFunction());
         }
@@ -113,25 +158,38 @@ public class Main {
      * @param individuals - массив существующих особей
      * @return новый массив особей
      */
-    public static Individual[] crossingOver(Individual[] individuals){
+    public static Individual[] crossingOver1(Individual[] individuals){
         Individual[] newIndividuals = new Individual[Population.sizeOfPopulation];
         int half = Population.sizeOfPopulation / 2;
+        Individual[] variantIndividuals = new Individual[(half*half-half)/2];
         int count = 0;
-        for (int i = 0; i < half; i++) {
-            newIndividuals[i] = individuals[i];
-        }
         for (int i = 0; i < half-1; i++) {
             for (int j = 1; j < half; j++) {
-                if (i!=j){
-                    newIndividuals[half+count] = Individual.child(individuals[i],individuals[j]);
+                if (i != j && j > i){
+                    variantIndividuals[count] = Individual.child(individuals[i],individuals[j]);
                     count++;
                 }
             }
         }
+        Arrays.sort(variantIndividuals, Collections.reverseOrder());
+        for (int i = 0; i < half; i++) {
+            newIndividuals[i] = individuals[i];
+        }
+        for (int i = 0; i < half; i++) {
+            newIndividuals[half+i] = variantIndividuals[i];
+        }
         return newIndividuals;
     }
 
+    public static double calculateFF(ArrayList<Population> populations){
+        int i = (populations.size()-1);
+        differenceFF = populations.get(i).getAverageFF() - populations.get(i-1).getAverageFF();
+        return differenceFF;
+    }
+
 }
+
+
 
 
 

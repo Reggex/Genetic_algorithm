@@ -168,6 +168,7 @@ public class Individual implements Comparable<Individual>{
      * @param o - объекты класса "Individual"(особь)
      * @return результат стравнения
      */
+    //https://javarush.com/groups/posts/2262-comparator-v-java
     @Override
     public int compareTo(Individual o) {
         return this.getFitnessFunction() - o.getFitnessFunction();
