@@ -6,6 +6,7 @@ package com.company;
 public class Population {
 
     private double averageFF;
+    private double averageSum;
     public static int sizeOfPopulation = 20;
     public Individual[] individualsArray = new Individual[sizeOfPopulation];
 
@@ -32,5 +33,17 @@ public class Population {
             averageFF = averageFF + individualsArray[i].getFitnessFunction();
         }
         averageFF = averageFF/sizeOfPopulation;
+    }
+
+    public double getAverageSum() {
+        return averageSum;
+    }
+
+    public void setAverageSum() {
+        averageSum = 0;
+        for (int i = 0; i < sizeOfPopulation; i++) {
+            averageSum = averageSum + individualsArray[i].getSumOfCost();
+        }
+        averageSum = averageSum/sizeOfPopulation;
     }
 }

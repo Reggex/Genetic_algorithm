@@ -196,6 +196,12 @@ public class Individual implements Comparable<Individual>{
         return child;
     }
 
+    /**
+     * Создание мутации в особи
+     * @param individual - особь, в которой будет мутация
+     * @param infrastructureObject - массив всех инфраструктурных объектов
+     * @return особь с мутацией
+     */
     public static Individual mutationChild(Individual individual, InfrastructureObject[] infrastructureObject){
         Random random = new Random();
         Individual child = new Individual();
