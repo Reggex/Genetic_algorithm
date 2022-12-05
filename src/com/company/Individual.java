@@ -1,5 +1,6 @@
 package com.company;
 
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Random;
  */
 public class Individual implements Comparable<Individual>{
 
-    public static int sizeOfIndividual = 26;    // количество объектов инфраструктуры в одной особи
+    public int sizeOfIndividual = 28;    // количество объектов инфраструктуры в одной особи
     private int sumOfCost;                      // стоимость всех объектов
     boolean sumFF = true;                       // метка выполнения критерия предела стоимости всех объектов
     private int sumOfCapacity;                  // пассажиропоток всех объектов
@@ -182,10 +183,12 @@ public class Individual implements Comparable<Individual>{
      */
     public static Individual child(Individual individual1, Individual individual2){
         Individual child = new Individual();
-        for (int i = 0; i < 13; i++) {
+        child.sizeOfIndividual = individual1.sizeOfIndividual;
+        child.individualArray = new InfrastructureObject[child.sizeOfIndividual];
+        for (int i = 0; i < 14; i++) {
             child.individualArray[i] = individual1.individualArray[i];
         }
-        for (int i = 13; i < sizeOfIndividual; i++) {
+        for (int i = 14; i < individual1.sizeOfIndividual; i++) {
             child.individualArray[i] = individual2.individualArray[i];
         }
         child.setSumOfCost();
@@ -205,13 +208,13 @@ public class Individual implements Comparable<Individual>{
     public static Individual mutationChild(Individual individual, InfrastructureObject[] infrastructureObject){
         Random random = new Random();
         Individual child = new Individual();
-        int x = random.nextInt(sizeOfIndividual);
+        int x = random.nextInt(individual.sizeOfIndividual);
         int y = random.nextInt(Main.sizeOfInfrastructure);
         for (int i = 0; i < x; i++) {
             child.individualArray[i] = individual.individualArray[i];
         }
         child.individualArray[x] = infrastructureObject[y];
-        for (int i = (x+1); i < sizeOfIndividual; i++) {
+        for (int i = (x+1); i < individual.sizeOfIndividual; i++) {
             child.individualArray[i] = individual.individualArray[i];
         }
         child.setSumOfCost();
@@ -221,6 +224,105 @@ public class Individual implements Comparable<Individual>{
         child.setFitnessFunction();
         return child;
     }
+
+    public static Individual newIndividual(Individual individual,InfrastructureObject[] infrastructureObject){
+        Random random = new Random();
+        int dif = individual.sumOfCost;
+        int k = 0;
+        boolean label = false;
+            while(label==false){
+                k = random.nextInt(Main.sizeOfInfrastructure);
+                if(infrastructureObject[k].getType()==2 && (dif+infrastructureObject[k].getCost())<500){
+                    label = true;
+                }
+            }
+            dif = dif + infrastructureObject[k].getCost();
+            label = false;
+
+        Individual child = new Individual();
+        child.sizeOfIndividual = (individual.sizeOfIndividual+1);
+        child.individualArray = new InfrastructureObject[child.sizeOfIndividual];
+        for (int i = 0; i < child.sizeOfIndividual; i++) {
+            if(i < individual.sizeOfIndividual){
+                child.individualArray[i] = individual.individualArray[i];
+            } else {
+                child.individualArray[i]=infrastructureObject[k];
+            }
+        }
+        child.setSumOfCost();
+        child.setSumOfCapacity();
+        child.setCapacityOfRailway();
+        child.setCostOfTaxi();
+        child.setFitnessFunction();
+        return child;
+    }
+
+    /*public static Individual newIndividual(Individual individual,InfrastructureObject[] infrastructureObject){
+        Random random = new Random();
+        int dif = individual.sumOfCost;
+        int k = 0;
+        int[] kArray = new int[10];
+        int size=0;
+        boolean label = false;
+        while (dif<495){
+            while(label==false){
+                k = random.nextInt(Main.sizeOfInfrastructure);
+                if(infrastructureObject[k].getType()==2 && (dif+infrastructureObject[k].getCost())<500){
+                    label = true;
+                }
+            }
+            kArray[size]=k;
+            size++;
+            dif = dif + infrastructureObject[k].getCost();
+            label = false;
+        }
+        int y=0;
+        Individual child = new Individual();
+        child.sizeOfIndividual = (individual.sizeOfIndividual+size);
+        child.individualArray = new InfrastructureObject[child.sizeOfIndividual];
+        for (int i = 0; i < child.sizeOfIndividual; i++) {
+            if(i< individual.sizeOfIndividual){
+                child.individualArray[i] = individual.individualArray[i];
+            } else {
+                child.individualArray[i]=infrastructureObject[kArray[y]];
+                y++;
+            }
+        }
+
+        child.setSumOfCost();
+        child.setSumOfCapacity();
+        child.setCapacityOfRailway();
+        child.setCostOfTaxi();
+        child.setFitnessFunction();
+        return child;
+    }*/
+
+    /*public static Individual newIndividual(Individual individual,InfrastructureObject[] infrastructureObject){
+        Random random = new Random();
+        List<InfrastructureObject> individ = List.of(individual.individualArray);
+        int dif = individual.sumOfCost;
+        int k;
+        while (dif<=495){
+            k = random.nextInt(Main.sizeOfInfrastructure);
+            while(infrastructureObject[k].getType()!=2 && (dif+infrastructureObject[k].getCost())>500){
+                k = random.nextInt(Main.sizeOfInfrastructure);
+            }
+            individ.add(infrastructureObject[k]);
+            dif = dif + infrastructureObject[k].getCost();
+        }
+        InfrastructureObject[] childArray = (InfrastructureObject[]) individ.toArray();
+        Individual child = new Individual();
+        child.sizeOfIndividual = childArray.length;
+        for (int i = 0; i < child.sizeOfIndividual; i++) {
+            child.individualArray[i] = childArray[i];
+        }
+        child.setSumOfCost();
+        child.setSumOfCapacity();
+        child.setCapacityOfRailway();
+        child.setCostOfTaxi();
+        child.setFitnessFunction();
+        return child;
+    }*/
 
 
 }

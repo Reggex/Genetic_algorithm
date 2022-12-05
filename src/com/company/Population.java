@@ -7,6 +7,9 @@ public class Population {
 
     private double averageFF;
     private double averageSum;
+    private int averageTaxi;
+    private int averageWithoutTaxi;
+    private int sumPassengerRailway;
     public static int sizeOfPopulation = 20;
     public Individual[] individualsArray = new Individual[sizeOfPopulation];
 
@@ -19,6 +22,42 @@ public class Population {
         this.setAverageFF();
     }
 
+
+    public int getAverageTaxi() {
+        return averageTaxi;
+    }
+
+    public void setAverageTaxi() {
+        averageTaxi = 0;
+        for (int i = 0; i < sizeOfPopulation; i++) {
+            averageTaxi = averageTaxi + individualsArray[i].getCostOfTaxi();
+        }
+    }
+
+    public int getAverageWithoutTaxi() {
+        return averageWithoutTaxi;
+    }
+
+    public void setAverageWithoutTaxi() {
+        averageWithoutTaxi = 0;
+        for (int i = 0; i < sizeOfPopulation; i++) {
+            averageWithoutTaxi = averageWithoutTaxi + individualsArray[i].getCostOfRailwayGround();
+        }
+    }
+
+    public int getSumPassengerRailway() {
+        return sumPassengerRailway;
+    }
+
+    /**
+     * Вычиление пассажиропотока каждого
+     */
+    public void setSumPassengerRailway() {
+        sumPassengerRailway = 0;
+        for (int i = 0; i < sizeOfPopulation; i++) {
+            sumPassengerRailway = sumPassengerRailway + individualsArray[i].getCapacityOfRailway();
+        }
+    }
 
     public double getAverageFF() {
         return averageFF;
@@ -39,6 +78,9 @@ public class Population {
         return averageSum;
     }
 
+    /**
+     * Вычисление средней стоимости всех особей одного поколения.
+     */
     public void setAverageSum() {
         averageSum = 0;
         for (int i = 0; i < sizeOfPopulation; i++) {
