@@ -154,13 +154,13 @@ public class Individual implements Comparable<Individual>{
     public void setFitnessFunction() {
         fitnessFunction = sumOfCapacity;
         if (!sumFF){
-            fitnessFunction = fitnessFunction - 100 * (sumOfCost - 500);
+            fitnessFunction = fitnessFunction - 1000 * (sumOfCost - 500);
         }
         if (!costFF){
-            fitnessFunction = (int) (fitnessFunction - 10000 * (0.15 * costOfRailwayGround - costOfTaxi/costOfRailwayGround));
+            fitnessFunction = (int) (fitnessFunction - 100000 * (0.15 * costOfRailwayGround - costOfTaxi/costOfRailwayGround));
         }
         if (!capacityFF){
-            fitnessFunction = fitnessFunction - 1000000 * (3 - capacityOfRailway);
+            fitnessFunction = fitnessFunction - 10000000 * (3 - capacityOfRailway);
         }
     }
 
@@ -176,10 +176,10 @@ public class Individual implements Comparable<Individual>{
     }
 
     /**
-     * Создание ребёнка
+     * Создание нового поколения с помощью одноточечного кроссинговера
      * @param individual1 - особь-родитель №1
      * @param individual2 - особь-родитель №2
-     * @return особь-ребёнка
+     * @return особь-ребёнок
      */
     public static Individual child(Individual individual1, Individual individual2){
         Individual child = new Individual();
@@ -199,6 +199,32 @@ public class Individual implements Comparable<Individual>{
         return child;
     }
 
+
+    /**
+     * Создание нового поколения с помощью двухточечного кроссинговера
+     * @param individual1 - особь-родитель №1
+     * @param individual2 - особь-родитель №2
+     * @return особь-ребёнок
+     */
+    public static Individual childSecondPoint(Individual individual1, Individual individual2){
+        Individual child = new Individual();
+        child.sizeOfIndividual = individual1.sizeOfIndividual;
+        child.individualArray = new InfrastructureObject[child.sizeOfIndividual];
+        for (int i = 0; i < 9; i++) {
+            child.individualArray[i] = individual1.individualArray[i];
+            child.individualArray[child.sizeOfIndividual-i-1] = individual1.individualArray[i];
+        }
+        for (int i = 9; i < (individual1.sizeOfIndividual-9); i++) {
+            child.individualArray[i] = individual2.individualArray[i];
+        }
+        child.setSumOfCost();
+        child.setSumOfCapacity();
+        child.setCapacityOfRailway();
+        child.setCostOfTaxi();
+        child.setFitnessFunction();
+        return child;
+    }
+
     /**
      * Создание мутации в особи
      * @param individual - особь, в которой будет мутация
@@ -208,6 +234,8 @@ public class Individual implements Comparable<Individual>{
     public static Individual mutationChild(Individual individual, InfrastructureObject[] infrastructureObject){
         Random random = new Random();
         Individual child = new Individual();
+        child.sizeOfIndividual = individual.sizeOfIndividual;
+        child.individualArray = new InfrastructureObject[child.sizeOfIndividual];
         int x = random.nextInt(individual.sizeOfIndividual);
         int y = random.nextInt(Main.sizeOfInfrastructure);
         for (int i = 0; i < x; i++) {
@@ -257,7 +285,7 @@ public class Individual implements Comparable<Individual>{
         return child;
     }
 
-    /*public static Individual newIndividual(Individual individual,InfrastructureObject[] infrastructureObject){
+    public static Individual lastIndividual(Individual individual,InfrastructureObject[] infrastructureObject){
         Random random = new Random();
         int dif = individual.sumOfCost;
         int k = 0;
@@ -295,7 +323,7 @@ public class Individual implements Comparable<Individual>{
         child.setCostOfTaxi();
         child.setFitnessFunction();
         return child;
-    }*/
+    }
 
     /*public static Individual newIndividual(Individual individual,InfrastructureObject[] infrastructureObject){
         Random random = new Random();

@@ -5,14 +5,14 @@ import java.util.*;
 public class Main {
 
     public static int sizeOfInfrastructure = 500;                   // количество объектов инфраструктуры всего
-    public static double differenceFF;
     public static int numberOfGenerations = 2;
     public static double deltaFF = 0.05;
-    public static boolean addCost=false;
 
 
     public static void main(String[] args) {
 	// write your code here
+        double differenceFF = 0;
+        boolean addCost=false;
 
         InfrastructureObject[] infrastructureObjects = new InfrastructureObject[sizeOfInfrastructure];
         createInfrArray(infrastructureObjects);
@@ -55,7 +55,7 @@ public class Main {
             p++;
         }
 
-        differenceFF = calculateFF(populations);
+        differenceFF = calculateFF(populations, differenceFF);
 
         while(differenceFF > deltaFF) {
             /*int i=2;
@@ -67,7 +67,7 @@ public class Main {
             sortIndivArray(individuals);
             population = new Population(individuals);
             populations.add(p, population);
-            differenceFF = calculateFF(populations);
+            differenceFF = calculateFF(populations, differenceFF);
 
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             System.out.println("Фитнес функция поколения: " + population.getAverageFF());
@@ -104,13 +104,17 @@ public class Main {
             value.setAverageWithoutTaxi();
             System.out.println(value.getAverageWithoutTaxi());
         }
-
+        System.out.println();
+        System.out.println("Percent of taxi cost: ");
+        for (Population value : populations) {
+            value.setPercent();
+            System.out.println(value.getPercent());
+        }
+        populations.get(populations.size()-1).setAverageSum();
 
         while(addCost==false){
-            populations.get(populations.size()-1).setAverageSum();
-            if(populations.get(populations.size()-1).getAverageSum() > 494){
-                addCost = true;
-            }
+
+            //individuals[1]=Individual.mutationChild(individuals[1], infrastructureObjects);
             Individual[] newIndividuals = new Individual[Population.sizeOfPopulation];
             for (int i = 0; i < Population.sizeOfPopulation; i++) {
                 newIndividuals[i]=Individual.newIndividual(individuals[i], infrastructureObjects);
@@ -119,45 +123,81 @@ public class Main {
             populations.add(population);
             individuals=newIndividuals;
 
-            differenceFF = calculateFF(populations);        //
+            differenceFF = calculateFF(populations, differenceFF);        //
             //
             while(differenceFF > deltaFF) {                 //
-                individuals = crossingOver1(individuals);   //
+                individuals =  crossingOver1(individuals);   //
                 sortIndivArray(individuals);                //
                 population = new Population(individuals);   //
                 populations.add(population);                //
-                differenceFF = calculateFF(populations);    //
+                differenceFF = calculateFF(populations, differenceFF);    //
             }                                               //
-            System.out.println("FF: ");
+
             for (Population value : populations) {
-                System.out.println(value.getAverageFF());
-            }
-            System.out.println();
-            System.out.println("Cost: ");
-            for (Population value : populations) {
+                value.setAverageFF();
                 value.setAverageSum();
-                System.out.println(value.getAverageSum());
-            }
-            System.out.println();
-            System.out.println("Railway: ");
-            for (Population value : populations) {
                 value.setSumPassengerRailway();
-                System.out.println(value.getSumPassengerRailway());
-            }
-            System.out.println();
-            System.out.println("Sum of Taxi: ");
-            for (Population value : populations) {
                 value.setAverageTaxi();
-                System.out.println(value.getAverageTaxi());
-            }
-            System.out.println();
-            System.out.println("Sum without taxi: ");
-            for (Population value : populations) {
                 value.setAverageWithoutTaxi();
-                System.out.println(value.getAverageWithoutTaxi());
+                value.setPercent();
+            }
+
+            if(populations.get(populations.size()-1).getAverageSum() > 495){
+                addCost = true;
+            }
+
+            for (int i = 0; i < Population.sizeOfPopulation; i++) {
+                if(individuals[i].getSumOfCost()>495){
+                    addCost = true;
+                }
             }
         }
 
+        if (populations.get(populations.size()-1).getAverageSum() < 495){
+            Individual[] newIndividuals = new Individual[Population.sizeOfPopulation];
+            for (int i = 0; i < Population.sizeOfPopulation; i++) {
+                newIndividuals[i]=Individual.lastIndividual(individuals[i], infrastructureObjects);
+            }
+            population = new Population(newIndividuals);
+            populations.add(population);
+            populations.add(population);
+            populations.add(population);
+        }
+
+        System.out.println("FF: ");
+        for (Population value : populations) {
+            System.out.println(value.getAverageFF());
+        }
+        System.out.println();
+        System.out.println("Cost: ");
+        for (Population value : populations) {
+            value.setAverageSum();
+            System.out.println(value.getAverageSum());
+        }
+        System.out.println();
+        System.out.println("Railway: ");
+        for (Population value : populations) {
+            value.setSumPassengerRailway();
+            System.out.println(value.getSumPassengerRailway());
+        }
+        System.out.println();
+        System.out.println("Sum of Taxi: ");
+        for (Population value : populations) {
+            value.setAverageTaxi();
+            System.out.println(value.getAverageTaxi());
+        }
+        System.out.println();
+        System.out.println("Sum without taxi: ");
+        for (Population value : populations) {
+            value.setAverageWithoutTaxi();
+            System.out.println(value.getAverageWithoutTaxi());
+        }
+        System.out.println();
+        System.out.println("Percent of taxi cost: ");
+        for (Population value : populations) {
+            value.setPercent();
+            System.out.println(value.getPercent());
+        }
     }
 
 
@@ -248,6 +288,34 @@ public class Main {
         return newIndividuals;
     }
 
+    /**
+     * Функция одноточечного кроссинговера.
+     * Вовремя кроссинговера выбираются лучшие из полученных потомков.
+     * @param individuals - массив существующих особей
+     * @return новый массив особей
+     */
+    public static Individual[] crossingOverSecondPoint(Individual[] individuals){
+        Individual[] newIndividuals = new Individual[Population.sizeOfPopulation];
+        int half = Population.sizeOfPopulation / 2;
+        Individual[] variantIndividuals = new Individual[(half*half-half)/2];
+        int count = 0;
+        for (int i = 0; i < half-1; i++) {
+            for (int j = 1; j < half; j++) {
+                if (j > i){
+                    variantIndividuals[count] = Individual.childSecondPoint(individuals[i],individuals[j]);
+                    count++;
+                }
+            }
+        }
+        Arrays.sort(variantIndividuals, Collections.reverseOrder());
+        for (int i = 0; i < half; i++) {
+            newIndividuals[i] = individuals[i];
+        }
+        for (int i = 0; i < half; i++) {
+            newIndividuals[half+i] = variantIndividuals[i];
+        }
+        return newIndividuals;
+    }
 
     /**
      * Функция одноточечного кроссинговера.
@@ -304,7 +372,7 @@ public class Main {
      * @param populations - динамический массив популяции.
      * @return разность фитнес функций
      */
-    public static double calculateFF(ArrayList<Population> populations){
+    public static double calculateFF(ArrayList<Population> populations, double differenceFF){
         int i = (populations.size()-1);
         differenceFF = populations.get(i).getAverageFF() - populations.get(i-numberOfGenerations).getAverageFF();
         return differenceFF;
