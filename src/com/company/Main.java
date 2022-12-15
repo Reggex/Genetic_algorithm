@@ -198,6 +198,39 @@ public class Main {
             value.setPercent();
             System.out.println(value.getPercent());
         }
+        System.out.println();
+        System.out.println("Best of FF:");
+        double bestFF = 0;
+        int[] bestCost = new int[populations.size()];
+        int[] bestRailway = new int[populations.size()];
+        double[] bestTaxi = new double[populations.size()];
+        for (int i = 0; i < populations.size(); i++) {
+            for (int j = 0; j < Population.sizeOfPopulation; j++) {
+                if(bestFF < populations.get(i).individualsArray[j].getFitnessFunction()){
+                    bestFF = populations.get(i).individualsArray[j].getFitnessFunction();
+                    bestCost[i]=populations.get(i).individualsArray[j].getSumOfCost();
+                    bestRailway[i]=populations.get(i).individualsArray[j].getCapacityOfRailway();
+                    bestTaxi[i]=100 * populations.get(i).individualsArray[j].getCostOfTaxi()/populations.get(i).individualsArray[j].getCostOfRailwayGround();
+                }
+            }
+            System.out.println(bestFF);
+            bestFF=0;
+        }
+        System.out.println();
+        System.out.println("лучший по фф в стоимости");
+        for (int i = 0; i < populations.size(); i++) {
+            System.out.println(bestCost[i]);
+        }
+        System.out.println();
+        System.out.println("лучший по фф в пассажиропотоке");
+        for (int i = 0; i < populations.size(); i++) {
+            System.out.println(bestRailway[i]);
+        }
+        System.out.println();
+        System.out.println("лучший по фф в стоимости такси");
+        for (int i = 0; i < populations.size(); i++) {
+            System.out.println(bestTaxi[i]);
+        }
     }
 
 
